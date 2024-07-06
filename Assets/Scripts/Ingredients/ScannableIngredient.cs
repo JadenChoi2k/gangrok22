@@ -1,13 +1,19 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class ScannableIngredient : Engazable
 {
     private Renderer m_renderer;
     private bool engazed = false;
     private bool scanned = false;
-    BlinkingOutliner outliner;
+
+    [SerializeField]
+    private Material EngazeMaterial;
+
+    [SerializeField]
+    private TMP_Text loadingText;
 
     void Start()
     {
@@ -18,26 +24,26 @@ public class ScannableIngredient : Engazable
     {
         if (engazed || scanned) return;
         engazed = true;
-
         Debug.Log("Scanning Started");
-
-        outliner = FindObjectOfType<BlinkingOutliner>();
-        if (outliner != null)
-        {
-            Debug.Log("draw outline");
-            outliner.AddOutline(GetHashCode().ToString(), m_renderer);
-        }
-        StartCoroutine(ScanFor3To6Sec());
+        StartCoroutine(ScanFor1To3Sec());
     }
 
-    IEnumerator ScanFor3To6Sec()
+    IEnumerator ScanFor1To3Sec()
     {
-        float waitSec = Random.Range(3f, 6f);
-        yield return new WaitForSeconds(waitSec);
-        if (outliner != null)
+        loadingText.gameObject.SetActive(true);
+        m_renderer.materials = new[] { m_renderer.materials[0], EngazeMaterial };
+        float waitSec = Random.Range(1f, 3f);
+        float t = 0;
+        while (t < waitSec)
         {
-            // outliner.RemoveOutline(GetHashCode().ToString());
+            t += Time.deltaTime;
+            loadingText.text = $"{Mathf.Floor(t / waitSec * 100)}%";
+            yield return null;
         }
+        loadingText.text = "100%";
+        yield return new WaitForSeconds(0.1f);
+        loadingText.gameObject.SetActive(false);
+        m_renderer.materials = new[] { m_renderer.materials[0] };
 
         Debug.Log($"Scan for {name} is done");
         scanned = true;
