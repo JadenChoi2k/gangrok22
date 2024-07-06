@@ -49,6 +49,11 @@ public class BlinkingOutliner : MonoBehaviour
     [Range(0, 1)]
     public float OutlineHardness = 0.85f;
 
+    /// <summary>
+    /// Å¸°ÙÀÌ µÇ´Â ·»´õ·¯ ¸ñ·Ï
+    /// </summary>
+    private Dictionary<string, Renderer> renderingTargets = new();
+
     void OnEnale()
     {
 
@@ -157,11 +162,13 @@ public class BlinkingOutliner : MonoBehaviour
         cmd.DrawRenderer(target, TargetMat);
         Graphics.ExecuteCommandBuffer(cmd);
     }
-    void SetTarget()
+
+    public void SetTarget(Renderer renderer)
     {
         cmd.SetRenderTarget(Mask);
         cmd.ClearRenderTarget(true, true, Color.black);
         Selected = true;
+        TargetRenderer = renderer;
         if (TargetRenderer != null)
         {
             RenderTarget(TargetRenderer);
@@ -181,7 +188,8 @@ public class BlinkingOutliner : MonoBehaviour
             Debug.LogWarning("No renderer provided for outline.");
         }
     }
-    void ClearTarget()
+
+    public void ClearTarget()
     {
         Selected = false;
         cmd.ClearRenderTarget(true, true, Color.black);
@@ -189,49 +197,33 @@ public class BlinkingOutliner : MonoBehaviour
         Graphics.ExecuteCommandBuffer(cmd);
         cmd.Clear();
     }
-    // Update is called once per frame
-    void Update()
+
+    public void AddOutline(string name, Renderer target)
     {
-        if (Input.GetMouseButton(0))
+        renderingTargets[name] = target;
+        _renderTargets();
+    }
+
+    public void RemoveOutline(string name)
+    {
+        renderingTargets.Remove(name);
+        _renderTargets();
+    }
+
+    public void CleanOutline()
+    {
+        renderingTargets = new();
+        ClearTarget();
+    }
+
+    void _renderTargets()
+    {
+        // ClearTarget();
+        cmd.SetRenderTarget(Mask);
+        cmd.ClearRenderTarget(true, true, Color.black);
+        foreach (var target in renderingTargets)
         {
-            Ray ray = cam.ScreenPointToRay(Input.mousePosition);
-            RaycastHit hit;
-            if (Physics.Raycast(ray, out hit))
-            {
-
-                TargetRenderer = hit.transform.GetComponent<Renderer>();
-                if (lastTarget == null) lastTarget = TargetRenderer;
-                if (SelectionMode == SelMode.AndChildren)
-                {
-                    if (ChildrenRenderers != null)
-                    {
-                        Array.Clear(ChildrenRenderers, 0, ChildrenRenderers.Length);
-                    }
-                    ChildrenRenderers = hit.transform.GetComponentsInChildren<Renderer>();
-                }
-
-
-                if (TargetRenderer != lastTarget || !Selected)
-                {
-                    SetTarget();
-                }
-                //Debug.DrawRay(transform.position, hit.point - transform.position, Color.blue);
-                lastTarget = TargetRenderer;
-            }
-            else
-            {
-                TargetRenderer = null;
-                lastTarget = null;
-                if (Selected)
-                {
-                    ClearTarget();
-                }
-            }
-            //cmd.Blit(OutlineRT,)
-        }
-        if (Input.GetMouseButtonUp(0) && Selected)
-        {
-            ClearTarget();
+            RenderTarget(target.Value);
         }
     }
 }

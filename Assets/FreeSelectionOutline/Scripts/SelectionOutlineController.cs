@@ -138,6 +138,7 @@ public class SelectionOutlineController : MonoBehaviour
     }
     void RenderTarget(Renderer target)
     {
+        Debug.Log($"RenderTarget({target})");
         Material TargetMat = new Material(TargetShader);
         bool MainTexFlag = false;
         string[] attrs = target.sharedMaterial.GetTexturePropertyNames();
@@ -157,12 +158,11 @@ public class SelectionOutlineController : MonoBehaviour
         cmd.DrawRenderer(target, TargetMat);
         Graphics.ExecuteCommandBuffer(cmd);
     }
-    public void SetTarget(Renderer renderer)
+    void SetTarget()
     {
         cmd.SetRenderTarget(Mask);
         cmd.ClearRenderTarget(true, true, Color.black);
         Selected = true;
-        TargetRenderer = renderer;
         if (TargetRenderer != null)
         {
             RenderTarget(TargetRenderer);
@@ -182,7 +182,7 @@ public class SelectionOutlineController : MonoBehaviour
             Debug.LogWarning("No renderer provided for outline.");
         }
     }
-    public void ClearTarget()
+    void ClearTarget()
     {
         Selected = false;
         cmd.ClearRenderTarget(true, true, Color.black);
@@ -193,5 +193,46 @@ public class SelectionOutlineController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (Input.GetMouseButton(0))
+        {
+            Ray ray = cam.ScreenPointToRay(Input.mousePosition);
+            RaycastHit hit;
+            if (Physics.Raycast(ray, out hit))
+            {
+
+                TargetRenderer = hit.transform.GetComponent<Renderer>();
+                if (lastTarget == null) lastTarget = TargetRenderer;
+                if (SelectionMode == SelMode.AndChildren)
+                {
+                    if (ChildrenRenderers != null)
+                    {
+                        Array.Clear(ChildrenRenderers, 0, ChildrenRenderers.Length);
+                    }
+                    ChildrenRenderers = hit.transform.GetComponentsInChildren<Renderer>();
+                }
+
+
+                if (TargetRenderer != lastTarget || !Selected)
+                {
+                    SetTarget();
+                }
+                //Debug.DrawRay(transform.position, hit.point - transform.position, Color.blue);
+                lastTarget = TargetRenderer;
+            }
+            else
+            {
+                TargetRenderer = null;
+                lastTarget = null;
+                if (Selected)
+                {
+                    ClearTarget();
+                }
+            }
+            //cmd.Blit(OutlineRT,)
+        }
+        if (Input.GetMouseButtonUp(0) && Selected)
+        {
+            ClearTarget();
+        }
     }
 }
