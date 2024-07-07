@@ -24,14 +24,14 @@ public class Refrigerator : MonoBehaviour
     public void Toggle()
     {
         if (rotating) return;
+        Debug.Log("Toggle!!");
+        opening = !opening;
+        rotating = true;
         if (first && opening)
         {
             first = false;
             StartCoroutine(ShowSuggestionAfter3Sec());
         }
-        Debug.Log("Toggle!!");
-        opening = !opening;
-        rotating = true;
     }
 
     IEnumerator ShowSuggestionAfter3Sec()
