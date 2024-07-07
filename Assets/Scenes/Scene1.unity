@@ -3110,7 +3110,7 @@ PrefabInstance:
     - target: {fileID: 4127818187269584296, guid: 4a623e3f5cc210f46ad3bf49ef2e8117, type: 3}
       propertyPath: m_Texture
       value: 
-      objectReference: {fileID: 2800000, guid: 381fa74db1f7cbf42ac3ba3eb892e88f, type: 3}
+      objectReference: {fileID: 2800000, guid: de1a2d4f54100d4478f08de4028acabf, type: 3}
     - target: {fileID: 4127818187269584298, guid: 4a623e3f5cc210f46ad3bf49ef2e8117, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -5037,13 +5037,7 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 1985103969987893885, guid: ab7567a476af1694eaa296a69d371b9a, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 0}
-    - targetCorrespondingSourceObject: {fileID: 2142470353473647505, guid: ab7567a476af1694eaa296a69d371b9a, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 0}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ab7567a476af1694eaa296a69d371b9a, type: 3}
 --- !u!4 &1172667862055927263 stripped
 Transform:
