@@ -6,6 +6,9 @@ public class Refrigerator : MonoBehaviour
 {
     bool opening = false;
     bool rotating = false;
+    bool first = true;
+    [SerializeField]
+    private GameObject DirtySuggest;
 
     static readonly Quaternion opened = Quaternion.Euler(90, 0, -93.2f);
     static readonly Quaternion closed = Quaternion.Euler(90, 0, -178f);
@@ -21,8 +24,19 @@ public class Refrigerator : MonoBehaviour
     public void Toggle()
     {
         if (rotating) return;
+        if (first && opening)
+        {
+            first = false;
+            StartCoroutine(ShowSuggestionAfter3Sec());
+        }
         Debug.Log("Toggle!!");
         opening = !opening;
         rotating = true;
+    }
+
+    IEnumerator ShowSuggestionAfter3Sec()
+    {
+        yield return new WaitForSeconds(3);
+        DirtySuggest.SetActive(true);
     }
 }

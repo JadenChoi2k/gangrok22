@@ -13,7 +13,7 @@ public class Engazer : MonoBehaviour
             if (hit.collider.CompareTag("RayInteraction"))
             {
                 var egz = hit.collider.GetComponent<Engazable>();
-                if (egz != null) egz.OnEngaze();
+                if (egz != null) egz.OnEngaze(transform);
             }
         }
     }

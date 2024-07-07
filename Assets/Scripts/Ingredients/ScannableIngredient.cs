@@ -20,7 +20,7 @@ public class ScannableIngredient : Engazable
         m_renderer = GetComponent<Renderer>();
     }
 
-    public override void OnEngaze()
+    public override void OnEngaze(Transform transform)
     {
         if (engazed || scanned) return;
         engazed = true;

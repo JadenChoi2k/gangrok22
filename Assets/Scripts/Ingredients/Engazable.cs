@@ -2,5 +2,5 @@ using UnityEngine;
 
 public abstract class Engazable : MonoBehaviour
 {
-    public abstract void OnEngaze();
+    public abstract void OnEngaze(Transform src);
 }
